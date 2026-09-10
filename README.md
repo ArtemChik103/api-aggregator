@@ -4,7 +4,7 @@
 
 ## Требования к системе
 
-- Docker и Docker Compose
+- Docker Desktop (или Docker Engine и Docker Compose)
 - Git
 - Минимум 2GB свободной оперативной памяти
 - Свободный порт 8000 для веб-сервера
@@ -33,6 +33,8 @@ git checkout sprint-1-task-1
 ```
 
 ### 2. Запуск Docker-контейнеров
+
+> **Важно:** Перед выполнением команд убедитесь, что приложение Docker Desktop запущено и служба Docker активна.
 
 ```bash
 docker compose up -d --build
@@ -111,56 +113,28 @@ docker compose exec app chmod -R 775 /var/www/html/storage /var/www/html/bootstr
 cp src/.env src/.env.review
 ```
 
-## Доступ к приложению и API
+## Доступ к приложению
 
-После успешного запуска приложение доступно по адресам:
-- **Веб-интерфейс (главная страница)**: [http://localhost:8000](http://localhost:8000)
-- **API эндпоинты**: [http://localhost:8000/api](http://localhost:8000/api)
+После успешного запуска приложение доступно по адресу:
+- **Веб-интерфейс**: [http://localhost:8000](http://localhost:8000)
 
-Пример проверки доступности через cURL:
-```bash
-curl -I http://localhost:8000
-```
+## Тестирование
 
-## Инструкции по тестированию приложения
-
-### 1. Запуск автоматических тестов
-
-Запуск тестов Laravel (Unit и Feature):
-```bash
-docker compose exec app php artisan test
-```
-
-### 2. Проверка статуса сервисов и окружения
+### Проверка работоспособности системы
 
 ```bash
-# Проверка общей информации о конфигурации Laravel
-docker compose exec app php artisan about
+# Проверка версии Laravel
+docker compose exec app php artisan --version
 
-# Проверка статуса миграций базы данных
-docker compose exec app php artisan migrate:status
-```
-
-### 3. Проверка подключения к PostgreSQL
-
-```bash
-# Просмотр созданных таблиц в базе данных laravel
-docker compose exec db psql -U postgres -d laravel -c "\dt"
-```
-
-### 4. Проверка подключения к Redis
-
-```bash
-# Тест ping к Redis через artisan tinker
-docker compose exec app php artisan tinker --execute="dump(Illuminate\Support\Facades\Redis::ping());"
+# Проверка доступности главной страницы
+curl http://localhost:8000
 ```
 
 ## Полезные команды
 
 ```bash
-# Просмотр логов контейнеров
+# Просмотр логов
 docker compose logs -f app
-docker compose logs -f webserver
 
 # Остановка контейнеров
 docker compose down
@@ -171,8 +145,8 @@ docker compose restart
 # Выполнение artisan команд внутри контейнера
 docker compose exec app php artisan <command>
 
-# Подключение к интерактивной консоли Tinker
-docker compose exec app php artisan tinker
+# Подключение к базе данных
+docker compose exec db psql -U postgres -d laravel
 ```
 
 ## Решение проблем
