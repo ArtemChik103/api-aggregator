@@ -29,7 +29,7 @@
 ```bash
 git clone https://gitlab.preax.ru/php/f99d8a8e-8e5.git
 cd f99d8a8e-8e5
-git checkout sprint-1-task-1
+git checkout sprint-1-task-2
 ```
 
 ### 2. Запуск Docker-контейнеров
@@ -97,7 +97,7 @@ docker compose exec app composer install
 # Генерация уникального ключа приложения (если не был установлен ранее)
 docker compose exec app php artisan key:generate
 
-# Применение стандартных миграций Laravel к базе данных PostgreSQL
+# Применение миграций Laravel к базе данных PostgreSQL
 docker compose exec app php artisan migrate
 
 # Настройка прав доступа к директориям storage и bootstrap/cache (при необходимости)
@@ -113,14 +113,17 @@ docker compose exec app chmod -R 775 /var/www/html/storage /var/www/html/bootstr
 cp src/.env src/.env.review
 ```
 
-## Доступ к приложению
+## Доступ к приложению и API эндпоинты
 
-После успешного запуска приложение доступно по адресу:
+После успешного запуска доступны следующие маршруты:
 - **Веб-интерфейс**: [http://localhost:8000](http://localhost:8000)
+- **Статус API**: `GET http://localhost:8000/api/status`
+- **Регистрация пользователя**: `POST http://localhost:8000/api/auth/register`
+- **Получение токена**: `POST http://localhost:8000/api/auth/token`
 
 ## Тестирование
 
-### Проверка работоспособности системы
+### 1. Проверка работоспособности системы
 
 ```bash
 # Проверка версии Laravel
@@ -128,6 +131,31 @@ docker compose exec app php artisan --version
 
 # Проверка доступности главной страницы
 curl http://localhost:8000
+
+# Проверка эндпоинта статуса API
+curl http://localhost:8000/api/status
+```
+
+### 2. Тестирование аутентификации через API
+
+```bash
+# Регистрация нового пользователя
+curl -X POST http://localhost:8000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{"name":"Alex","email":"alex@example.com","password":"password123"}'
+
+# Получение нового API токена (аутентификация)
+curl -X POST http://localhost:8000/api/auth/token \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{"email":"alex@example.com","password":"password123"}'
+```
+
+### 3. Автоматические тесты
+
+```bash
+docker compose exec app php artisan test
 ```
 
 ## Полезные команды
@@ -175,4 +203,4 @@ docker system prune     # Очистит неиспользуемые ресур
 
 - **Имя**: Артём
 - **Ник**: pechkurofff
-- **Статус**: Спринт 1, Задача 1 успешно завершена и отлажена
+- **Статус**: Спринт 1, Задача 2 выполнена
