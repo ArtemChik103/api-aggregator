@@ -120,6 +120,26 @@ cp src/.env src/.env.review
 - **Статус API**: `GET http://localhost:8000/api/status`
 - **Регистрация пользователя**: `POST http://localhost:8000/api/auth/register`
 - **Получение токена**: `POST http://localhost:8000/api/auth/token`
+- **Погода по названию города** *(требует Bearer токен)*: `GET http://localhost:8000/api/weather/city/{city}`
+- **Погода по координатам** *(требует Bearer токен)*: `GET http://localhost:8000/api/weather/coordinates/{latitude}/{longitude}`
+
+## Управление API-провайдерами
+
+Для добавления нового API-провайдера в базу данных используется интерактивная Artisan-команда:
+
+```bash
+docker compose exec app php artisan provider:create
+```
+
+Также команду можно запускать неинтерактивно с передачей аргументов:
+
+```bash
+docker compose exec app php artisan provider:create \
+  --name="open-meteo" \
+  --base_url="https://api.open-meteo.com/v1" \
+  --description="Бесплатный сервис погоды Open-Meteo" \
+  --status="active"
+```
 
 ## Тестирование
 
@@ -139,7 +159,7 @@ curl http://localhost:8000/api/status
 ### 2. Тестирование аутентификации через API
 
 ```bash
-# Регистрация нового пользователя
+# Регистрация нового пользователя и получение токена
 curl -X POST http://localhost:8000/api/auth/register \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
@@ -152,7 +172,21 @@ curl -X POST http://localhost:8000/api/auth/token \
   -d '{"email":"alex@example.com","password":"password123"}'
 ```
 
-### 3. Автоматические тесты
+### 3. Тестирование эндпоинтов погоды
+
+```bash
+# Получение погоды по названию города (замените <TOKEN> на ваш Bearer токен)
+curl -X GET http://localhost:8000/api/weather/city/Moscow \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Accept: application/json"
+
+# Получение погоды по координатам (широта и долгота)
+curl -X GET http://localhost:8000/api/weather/coordinates/55.75/37.61 \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Accept: application/json"
+```
+
+### 4. Автоматические тесты
 
 ```bash
 docker compose exec app php artisan test
@@ -201,6 +235,7 @@ docker system prune     # Очистит неиспользуемые ресур
 
 ## Developer
 
-- **Имя**: Артём
-- **Ник**: pechkurofff
-- **Статус**: Спринт 1, Задача 2 выполнена
+- **Имя**: Артём (Печкуров Артём)
+- **Ник**: ArtemChik103 (pechkurofff)
+- **Статус**: Спринт 1, Задача 3 выполнена
+
