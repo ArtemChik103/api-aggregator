@@ -16,7 +16,7 @@ class StatusController extends Controller
         return response()->json([
             'status' => 'OK',
             'timestamp' => now()->toIso8601ZuluString(),
-            'api_version' => '1.0.0',
+            'api_version' => config('app.version', '1.0.0'),
         ]);
     }
 }
