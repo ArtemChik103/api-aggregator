@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/status', [StatusController::class, 'index']);
 
-Route::post('/auth/register', [AuthController::class, 'register']);
-Route::post('/auth/token', [AuthController::class, 'newToken']);
+Route::prefix('auth')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/token', [AuthController::class, 'newToken']);
+});
 
 Route::get('/user', function (Request $request) {
     return $request->user();
